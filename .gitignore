@@ -58,3 +58,6 @@ Desktop.ini
 # Local release artifacts
 dist/
 _finalize_backup_*/
+
+# Local release artifacts
+dist/
