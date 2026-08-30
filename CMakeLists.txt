@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 
-project(AutomotiveTelemetryConsole VERSION 2.6.2 LANGUAGES CXX)
+project(AutomotiveTelemetryConsole VERSION 2.6.3 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -60,7 +60,6 @@ qt_add_qml_module(AutomotiveTelemetryConsole
         qml/Main.qml
         qml/components/MetricCard.qml
         qml/components/TrendChart.qml
-        qml/components/StartupSplash.qml
 )
 
 target_include_directories(AutomotiveTelemetryConsole PRIVATE src)
@@ -117,3 +116,25 @@ if(BUILD_BENCHMARKS)
 endif()
 
 install(TARGETS AutomotiveTelemetryConsole BUNDLE DESTINATION . RUNTIME DESTINATION bin)
+
+# AXIOM_V263_WINDOWS_BEGIN
+# GUI subsystem: prevents Windows from launching a console window beside AXIOM.
+set_target_properties(AutomotiveTelemetryConsole PROPERTIES
+    WIN32_EXECUTABLE TRUE
+)
+
+# Embed a real Windows Explorer/taskbar icon into the executable.
+if(WIN32)
+    target_sources(AutomotiveTelemetryConsole PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/resources/axiom.rc"
+    )
+endif()
+
+# Embed the PNG as a Qt resource so QML and QGuiApplication use the same brand asset.
+qt_add_resources(AutomotiveTelemetryConsole "axiom_branding"
+    PREFIX "/branding"
+    BASE "${CMAKE_CURRENT_SOURCE_DIR}/assets"
+    FILES
+        "${CMAKE_CURRENT_SOURCE_DIR}/assets/axiom_icon.png"
+)
+# AXIOM_V263_WINDOWS_END

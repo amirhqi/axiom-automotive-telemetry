@@ -6,7 +6,7 @@ AXIOM is distributed for Windows in two forms.
 
 The recommended package for ordinary users is:
 
-`AXIOM-v2.6.1-Windows-x64-Setup.exe`
+`AXIOM-v2.6.3-Windows-x64-Setup.exe`
 
 It installs the application for the current user and creates a Start menu entry.
 
@@ -14,7 +14,7 @@ It installs the application for the current user and creates a Start menu entry.
 
 The portable package is:
 
-`AXIOM-v2.6.1-Windows-x64-Portable.zip`
+`AXIOM-v2.6.3-Windows-x64-Portable.zip`
 
 Extract the complete archive and run `AxiomTelemetryWorkbench.exe`.
 

@@ -6,21 +6,324 @@ import "components"
 
 ApplicationWindow {
     id: root
-    StartupSplash {
-        id: startupSplash
-        onFinished: {
-            root.visible = true
-            root.raise()
-            root.requestActivate()
+
+    // AXIOM_V263_SPLASH_BEGIN
+    Rectangle {
+        id: axiomStartupOverlay
+        anchors.fill: parent
+        z: 999999
+        visible: true
+        enabled: visible
+        opacity: 1
+        color: "#090E12"
+
+        property real bootProgress: 0
+        property string bootPhase: "INITIALIZING WORKBENCH"
+        property bool dismissing: false
+        property bool completed: false
+
+        function finishNow() {
+            if (completed)
+                return
+
+            completed = true
+            visible = false
+            enabled = false
+            opacity = 0
+        }
+
+        function dismiss() {
+            if (completed || dismissing)
+                return
+
+            dismissing = true
+            axiomSplashExit.start()
+        }
+
+        Rectangle {
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            width: 4
+            color: "#29A8D8"
+        }
+
+        Column {
+            width: Math.min(parent.width * 0.80, 900)
+            anchors.centerIn: parent
+            spacing: 0
+
+            Row {
+                width: parent.width
+                spacing: 18
+
+                Image {
+                    width: 96
+                    height: 96
+                    source: "qrc:/branding/axiom_icon.png"
+                    fillMode: Image.PreserveAspectFit
+                    smooth: true
+                    mipmap: true
+                }
+
+                Column {
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: 4
+
+                    Text {
+                        text: "AXIOM"
+                        color: "#F0F5F7"
+                        font.pixelSize: 38
+                        font.weight: Font.DemiBold
+                        font.letterSpacing: 2.4
+                    }
+
+                    Text {
+                        text: "AUTOMOTIVE TELEMETRY WORKBENCH"
+                        color: "#7E929D"
+                        font.pixelSize: 12
+                        font.weight: Font.Medium
+                        font.letterSpacing: 0.8
+                    }
+                }
+            }
+
+            Item { width: 1; height: 66 }
+
+            Row {
+                width: parent.width
+
+                Text {
+                    width: parent.width - 55
+                    text: axiomStartupOverlay.bootPhase
+                    color: "#B8C6CD"
+                    font.pixelSize: 12
+                    font.weight: Font.DemiBold
+                    font.letterSpacing: 0.5
+                }
+
+                Text {
+                    width: 55
+                    horizontalAlignment: Text.AlignRight
+                    text: Math.round(axiomStartupOverlay.bootProgress) + "%"
+                    color: "#71838D"
+                    font.pixelSize: 11
+                    font.family: "Consolas"
+                }
+            }
+
+            Item { width: 1; height: 12 }
+
+            Rectangle {
+                id: axiomProgressTrack
+                width: parent.width
+                height: 8
+                radius: 2
+                color: "#172128"
+                border.color: "#27363E"
+                border.width: 1
+
+                Rectangle {
+                    width: Math.max(2, axiomProgressTrack.width * axiomStartupOverlay.bootProgress / 100)
+                    height: parent.height
+                    radius: 2
+                    color: axiomStartupOverlay.bootProgress >= 99 ? "#5CB98B" : "#29A8D8"
+                }
+            }
+
+            Item { width: 1; height: 14 }
+
+            Row {
+                width: parent.width
+                spacing: 8
+
+                Repeater {
+                    model: [
+                        { name: "CORE", gate: 15 },
+                        { name: "I/O", gate: 36 },
+                        { name: "PARSER", gate: 58 },
+                        { name: "WORKSPACE", gate: 80 },
+                        { name: "READY", gate: 99 }
+                    ]
+
+                    delegate: Rectangle {
+                        required property var modelData
+
+                        width: (parent.width - 32) / 5
+                        height: 38
+                        radius: 4
+                        color: axiomStartupOverlay.bootProgress >= modelData.gate ? "#12303A" : "#10171B"
+                        border.color: axiomStartupOverlay.bootProgress >= modelData.gate ? "#35A2CA" : "#27343B"
+
+                        Text {
+                            anchors.centerIn: parent
+                            text: modelData.name
+                            color: axiomStartupOverlay.bootProgress >= modelData.gate ? "#9DDFF5" : "#60717A"
+                            font.pixelSize: 10
+                            font.family: "Consolas"
+                            font.weight: Font.Medium
+                        }
+                    }
+                }
+            }
+
+            Item { width: 1; height: 72 }
+
+            Rectangle {
+                width: parent.width
+                height: 1
+                color: "#202C33"
+            }
+
+            Item { width: 1; height: 14 }
+
+            Row {
+                width: parent.width
+
+                Text {
+                    width: parent.width * 0.58
+                    text: "C++17  /  Qt 6  /  ASYNCHRONOUS I/O  /  TELEMETRY ENGINE"
+                    color: "#6B818D"
+                    font.pixelSize: 8
+                    font.family: "Consolas"
+                }                Column {
+                    width: parent.width * 0.42
+                    spacing: 3
+
+                    Text {
+                        width: parent.width
+                        horizontalAlignment: Text.AlignRight
+                        text: "DESIGNED BY"
+                        color: "#6E8B99"
+                        font.pixelSize: 10
+                        font.weight: Font.Bold
+                        font.letterSpacing: 1.4
+                    }
+
+                    Text {
+                        width: parent.width
+                        horizontalAlignment: Text.AlignRight
+                        text: "Amirhossein Haghi"
+                        color: "#D8F3FC"
+                        font.pixelSize: 17
+                        font.weight: Font.Bold
+                        font.letterSpacing: 0.4
+                    }
+                }
+            }
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            enabled: axiomStartupOverlay.bootProgress >= 35
+            onClicked: axiomStartupOverlay.dismiss()
+        }
+
+        SequentialAnimation {
+            id: axiomSplashBoot
+            running: true
+
+            ScriptAction {
+                script: axiomStartupOverlay.bootPhase = "INITIALIZING WORKBENCH"
+            }
+
+            NumberAnimation {
+                target: axiomStartupOverlay
+                property: "bootProgress"
+                from: 0
+                to: 23
+                duration: 260
+                easing.type: Easing.OutCubic
+            }
+
+            ScriptAction {
+                script: axiomStartupOverlay.bootPhase = "PREPARING TRANSPORT SERVICES"
+            }
+
+            NumberAnimation {
+                target: axiomStartupOverlay
+                property: "bootProgress"
+                to: 48
+                duration: 300
+                easing.type: Easing.InOutCubic
+            }
+
+            ScriptAction {
+                script: axiomStartupOverlay.bootPhase = "INITIALIZING TELEMETRY PIPELINE"
+            }
+
+            NumberAnimation {
+                target: axiomStartupOverlay
+                property: "bootProgress"
+                to: 72
+                duration: 300
+                easing.type: Easing.InOutCubic
+            }
+
+            ScriptAction {
+                script: axiomStartupOverlay.bootPhase = "PREPARING ENGINEERING WORKSPACE"
+            }
+
+            NumberAnimation {
+                target: axiomStartupOverlay
+                property: "bootProgress"
+                to: 94
+                duration: 300
+                easing.type: Easing.OutCubic
+            }
+
+            ScriptAction {
+                script: axiomStartupOverlay.bootPhase = "READY"
+            }
+
+            NumberAnimation {
+                target: axiomStartupOverlay
+                property: "bootProgress"
+                to: 100
+                duration: 180
+                easing.type: Easing.OutCubic
+            }
+
+            PauseAnimation { duration: 160 }
+
+            ScriptAction {
+                script: axiomStartupOverlay.dismiss()
+            }
+        }
+
+        SequentialAnimation {
+            id: axiomSplashExit
+
+            NumberAnimation {
+                target: axiomStartupOverlay
+                property: "opacity"
+                to: 0
+                duration: 180
+                easing.type: Easing.InCubic
+            }
+
+            ScriptAction {
+                script: axiomStartupOverlay.finishNow()
+            }
+        }
+
+        // Hard failsafe: even if an animation is interrupted, the overlay
+        // cannot stay on screen forever.
+        Timer {
+            interval: 2600
+            running: true
+            repeat: false
+            onTriggered: axiomStartupOverlay.finishNow()
         }
     }
+    // AXIOM_V263_SPLASH_END
 
     width: 1500
     height: 900
     minimumWidth: 1080
     minimumHeight: 680
-    visible: false
-    title: "AXIOM Automotive Telemetry Workbench - v2.6.2"
+    visible: true
+    title: "AXIOM Automotive Telemetry Workbench - v2.6.3"
     color: "#0f1215"
 
     readonly property color cBg: "#0f1215"

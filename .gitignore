@@ -79,3 +79,13 @@ _finalizer_backup_*/
 *.csv
 
 _splash_backup_*/
+
+_v263_rc_backup_*/
+
+_v263_visual_backup_*.qml
+
+_readability_backup_*/
+
+_v263_rc_backup_*/
+_v263_visual_backup_*.qml
+_readability_backup_*/

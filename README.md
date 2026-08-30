@@ -65,15 +65,15 @@ See [Architecture](docs/ARCHITECTURE.md) and [Design Decisions](docs/DESIGN_DECI
 
 ## Download
 
-### Windows Installer — recommended
+### Windows Installer â€” recommended
 
-Download **AXIOM-v2.6.1-Windows-x64-Setup.exe** from the [latest release](https://github.com/amirhqi/axiom-automotive-telemetry/releases/latest).
+Download **AXIOM-v2.6.3-Windows-x64-Setup.exe** from the [latest release](https://github.com/amirhqi/axiom-automotive-telemetry/releases/latest).
 
 Run the installer and launch AXIOM from the Start menu or desktop shortcut.
 
 ### Windows Portable
 
-Download **AXIOM-v2.6.1-Windows-x64-Portable.zip** from the [latest release](https://github.com/amirhqi/axiom-automotive-telemetry/releases/latest).
+Download **AXIOM-v2.6.3-Windows-x64-Portable.zip** from the [latest release](https://github.com/amirhqi/axiom-automotive-telemetry/releases/latest).
 
 Extract the complete archive and run:
 
@@ -83,6 +83,10 @@ AxiomTelemetryWorkbench.exe
 
 Qt Creator and the Qt SDK are **not required** to run either Windows package.
 
+
+## Accessibility / Readability
+
+AXIOM includes a larger default UI scale for improved readability on standard-density Windows displays. The startup sequence and engineering workspaces are designed with high contrast, larger labels, and restrained motion.
 ## Quick Demo
 
 Run:
