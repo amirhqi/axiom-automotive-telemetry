@@ -1,31 +1,21 @@
 # Roadmap
 
-The roadmap favors deeper automotive/embedded engineering before adding unrelated cloud or visualization features.
-
 ## Near term
 
-- Native Linux build validation with GCC
-- Repeat automated tests on Linux
-- Improve packaging/deployment documentation
-- Record/replay workflow for telemetry sessions
-- Additional performance measurements with reproducible test conditions
-
-## Automotive transport
-
-- SocketCAN transport on Linux
-- Virtual CAN (`vcan`) development setup
-- CAN frame monitor/filtering
-- DBC-based signal decoding
-- ISO-TP transport
-- OBD-II live data and diagnostic trouble code experiments
+- SocketCAN / QCanBus transport
+- DBC signal descriptions and decoding
+- CAN trace record/replay
+- ISO-TP experiments
+- Linux CI validation
+- verified ARM64 deployment
 
 ## Embedded Linux
 
-- Real ARM64 cross-build validation
-- Deployment to an ARM Linux target
-- Yocto/BitBake recipe validation against a reproducible image
-- Startup/service integration appropriate to the target
+- target sysroot
+- reproducible cross-compilation
+- Yocto recipe validation against a real target image
+- service/process integration
 
-## Out of scope for the current milestone
+## Deferred
 
-Kafka, machine learning and 3D visualization are intentionally not part of the core roadmap until automotive transport and embedded deployment are demonstrated cleanly.
+Cloud, Kafka, ML and 3D visualization remain out of scope until the core automotive/embedded path is verified.

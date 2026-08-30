@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 
-project(AxiomTelemetryWorkbench VERSION 0.2.6 LANGUAGES CXX)
+project(AutomotiveTelemetryConsole VERSION 2.6.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -60,6 +60,7 @@ qt_add_qml_module(AutomotiveTelemetryConsole
         qml/Main.qml
         qml/components/MetricCard.qml
         qml/components/TrendChart.qml
+        qml/components/StartupSplash.qml
 )
 
 target_include_directories(AutomotiveTelemetryConsole PRIVATE src)

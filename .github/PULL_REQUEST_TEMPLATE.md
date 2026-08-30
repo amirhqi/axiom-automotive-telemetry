@@ -1,21 +1,14 @@
 ## Summary
 
-<!-- What changed and why? -->
-
-## Engineering notes
-
-<!-- Architecture, threading, transport or compatibility considerations. -->
+Describe the engineering change and why it is needed.
 
 ## Validation
 
-- [ ] Project builds locally
-- [ ] Automated tests pass
-- [ ] New/changed behavior has test coverage where practical
-- [ ] Documentation was updated when needed
-- [ ] UI changes include a screenshot when useful
+- [ ] Builds locally
+- [ ] Existing tests pass
+- [ ] New behavior has tests where appropriate
+- [ ] Documentation updated where appropriate
 
-## Test commands / evidence
+## Architecture impact
 
-```text
-ctest --test-dir build --output-on-failure
-```
+Describe thread, transport, protocol, memory or deployment implications.

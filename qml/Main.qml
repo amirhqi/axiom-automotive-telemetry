@@ -10,8 +10,8 @@ ApplicationWindow {
     height: 900
     minimumWidth: 1080
     minimumHeight: 680
-    visible: true
-    title: "AXIOM Automotive Telemetry Workbench - v2.6"
+    visible: false
+    title: "AXIOM Automotive Telemetry Workbench - v2.6.1"
     color: "#0f1215"
 
     readonly property color cBg: "#0f1215"
@@ -28,6 +28,15 @@ ApplicationWindow {
     readonly property color cBad: "#d05b5b"
     readonly property bool connected: Telemetry.status === "Connected"
 
+
+    StartupSplash {
+        id: startupSplash
+        onFinished: {
+            root.visible = true
+            root.raise()
+            root.requestActivate()
+        }
+    }
     palette.window: cBg
     palette.windowText: cText
     palette.base: "#12171c"

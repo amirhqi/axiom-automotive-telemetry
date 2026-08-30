@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     qputenv("QT_QUICK_CONTROLS_STYLE", QByteArrayLiteral("Fusion"));
 
     QGuiApplication app(argc, argv);
-    QGuiApplication::setOrganizationName(QStringLiteral("AXIOM"));
+    QGuiApplication::setOrganizationName(QStringLiteral("AXIOM Engineering"));
     QGuiApplication::setApplicationName(QStringLiteral("AXIOM Automotive Telemetry Workbench"));
     QGuiApplication::setApplicationVersion(QStringLiteral("2.6"));
     QGuiApplication::setWindowIcon(QIcon(QStringLiteral(":/assets/axiom_icon.png")));

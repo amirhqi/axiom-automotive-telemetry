@@ -55,3 +55,6 @@ docs/CROUSE_MATCH.md
 .DS_Store
 Thumbs.db
 Desktop.ini
+# Local release artifacts
+dist/
+_finalize_backup_*/
