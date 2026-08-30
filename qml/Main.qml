@@ -6,12 +6,21 @@ import "components"
 
 ApplicationWindow {
     id: root
+    StartupSplash {
+        id: startupSplash
+        onFinished: {
+            root.visible = true
+            root.raise()
+            root.requestActivate()
+        }
+    }
+
     width: 1500
     height: 900
     minimumWidth: 1080
     minimumHeight: 680
     visible: false
-    title: "AXIOM Automotive Telemetry Workbench - v2.6.1"
+    title: "AXIOM Automotive Telemetry Workbench - v2.6.2"
     color: "#0f1215"
 
     readonly property color cBg: "#0f1215"
@@ -29,14 +38,6 @@ ApplicationWindow {
     readonly property bool connected: Telemetry.status === "Connected"
 
 
-    StartupSplash {
-        id: startupSplash
-        onFinished: {
-            root.visible = true
-            root.raise()
-            root.requestActivate()
-        }
-    }
     palette.window: cBg
     palette.windowText: cText
     palette.base: "#12171c"
