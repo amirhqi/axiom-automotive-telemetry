@@ -5,8 +5,9 @@
 [![CI](https://github.com/amirhqi/axiom-automotive-telemetry/actions/workflows/ci.yml/badge.svg)](https://github.com/amirhqi/axiom-automotive-telemetry/actions/workflows/ci.yml)
 [![Latest Release](https://img.shields.io/github/v/release/amirhqi/axiom-automotive-telemetry?display_name=tag)](https://github.com/amirhqi/axiom-automotive-telemetry/releases/latest)
 ![C++17](https://img.shields.io/badge/C%2B%2B-17-00599C)
-![Qt](https://img.shields.io/badge/Qt-6-41CD52)
-![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux-lightgrey)
+![Qt 6](https://img.shields.io/badge/Qt-6-41CD52)
+![Windows](https://img.shields.io/badge/Windows-11-0078D4)
+![Linux](https://img.shields.io/badge/Linux-target-FCC624)
 
 ## Preview
 
@@ -24,41 +25,41 @@
 
 ## Overview
 
-AXIOM is an engineering telemetry workbench designed around the same problems found in hardware-facing and automotive applications: asynchronous I/O, stream framing, validation, reconnect behavior, logging, diagnostics, responsive UI design, and automated verification.
+AXIOM is an engineering telemetry and diagnostics workbench built around the same software concerns found in hardware-facing and automotive applications: asynchronous I/O, stream framing, validation, reconnect behavior, diagnostics, logging, responsive UI design, and automated verification.
 
 **Acquire -> Validate -> Observe -> Diagnose**
 
-### Core capabilities
+## Core Capabilities
 
 - C++17 backend
-- Qt 6 / Qt Quick / QML UI
+- Qt 6 / Qt Quick / QML interface
 - TCP, UDP, and Serial transports
-- worker-thread I/O architecture
+- dedicated worker-thread I/O architecture
 - TCP fragmentation-safe receive buffering
-- packet/frame validation and rejection counters
-- reconnect handling
+- frame validation and rejection counters
+- automatic reconnect behavior
 - live telemetry visualization
 - raw frame trace
 - diagnostics and session statistics
 - CSV logging
 - deterministic fault-injection simulator
 - unit, integration, and functional smoke tests
-- CMake/Ninja build workflow
-- Embedded Linux, ARM64, and Yocto scaffolding
+- CMake / Ninja workflow
+- Embedded Linux / ARM64 / Yocto scaffolding
 
 ## Architecture
 
 ```mermaid
 flowchart LR
-    A[ECU / MCU / Simulator] -->|TCP / UDP / Serial| B[TelemetryWorker]
-    B --> C[Receive Buffer]
-    C --> D[PacketParser]
-    D --> E[TelemetryController]
-    E --> F[Qt Quick / QML]
-    E --> G[CSV Logger]
+    ECU[ECU / MCU / Simulator] -->|TCP / UDP / Serial| Worker[TelemetryWorker]
+    Worker --> Buffer[Receive Buffer]
+    Buffer --> Parser[PacketParser]
+    Parser --> Controller[TelemetryController]
+    Controller --> UI[Qt Quick / QML]
+    Controller --> Logger[CSV Logger]
 ```
 
-The Qt GUI stays on the main thread while transport and connection work are handled separately, helping keep rendering and interaction responsive during I/O activity.
+The Qt GUI remains on the main thread. Transport and connection work are handled separately so I/O activity does not block rendering and interaction.
 
 See [Architecture](docs/ARCHITECTURE.md) and [Design Decisions](docs/DESIGN_DECISIONS.md).
 
@@ -68,17 +69,19 @@ See [Architecture](docs/ARCHITECTURE.md) and [Design Decisions](docs/DESIGN_DECI
 
 Download **AXIOM-v2.6.1-Windows-x64-Setup.exe** from the [latest release](https://github.com/amirhqi/axiom-automotive-telemetry/releases/latest).
 
-Install it normally and launch AXIOM from the Start menu.
+Run the installer and launch AXIOM from the Start menu or desktop shortcut.
 
 ### Windows Portable
 
-Download **AXIOM-v2.6.1-Windows-x64-Portable.zip**, extract the entire archive, then run:
+Download **AXIOM-v2.6.1-Windows-x64-Portable.zip** from the [latest release](https://github.com/amirhqi/axiom-automotive-telemetry/releases/latest).
+
+Extract the complete archive and run:
 
 ```text
 AxiomTelemetryWorkbench.exe
 ```
 
-Qt Creator and the Qt SDK are **not required** to run either binary package.
+Qt Creator and the Qt SDK are **not required** to run either Windows package.
 
 ## Quick Demo
 
@@ -88,7 +91,7 @@ Run:
 python tools/simulator.py
 ```
 
-Then connect with:
+Then connect AXIOM to:
 
 ```text
 Transport: TCP
@@ -105,9 +108,9 @@ python tools/simulator.py --disconnect-every 5
 python tools/simulator.py --rate 500 --fault-rate 0.02
 ```
 
-## Tests
+## Automated Tests
 
-The project includes:
+The repository includes:
 
 - `PacketParserTests`
 - `TcpIntegrationTests`
@@ -115,9 +118,7 @@ The project includes:
 - `CsvLoggerTests`
 - `FunctionalSmokeTests`
 
-Latest validated local Windows run: **5/5 test targets passed.**
-
-Run them with:
+Validated local Windows run: **5/5 test targets passed.**
 
 ```bash
 ctest --test-dir build --output-on-failure
@@ -128,7 +129,7 @@ ctest --test-dir build --output-on-failure
 Requirements:
 
 - Qt 6.11.x
-- C++17 compiler
+- a C++17 compiler
 - CMake
 - Ninja or another supported CMake generator
 
@@ -147,10 +148,10 @@ See [Building](docs/BUILDING.md).
 assets/         application branding assets
 benchmarks/     benchmark code
 cmake/          toolchain files
-docs/           architecture, build, testing, protocol and screenshots
+docs/           architecture, protocol, build, test and distribution docs
 qml/            Qt Quick UI
-scripts/        build/test helpers
-src/            C++ application source
+scripts/        build and test helpers
+src/            C++ source
 tests/          automated tests
 tools/          simulators and utilities
 yocto/          Embedded Linux / Yocto scaffold
@@ -159,7 +160,7 @@ yocto/          Embedded Linux / Yocto scaffold
 ## Documentation
 
 - [Architecture](docs/ARCHITECTURE.md)
-- [Design decisions](docs/DESIGN_DECISIONS.md)
+- [Design Decisions](docs/DESIGN_DECISIONS.md)
 - [Protocol](docs/PROTOCOL.md)
 - [Building](docs/BUILDING.md)
 - [Testing](docs/TESTING.md)
@@ -170,9 +171,9 @@ yocto/          Embedded Linux / Yocto scaffold
 - [Security](SECURITY.md)
 - [Changelog](CHANGELOG.md)
 
-## Project Scope
+## Scope
 
-AXIOM is an engineering portfolio and experimental telemetry project. It is **not** a safety-certified ECU, ISO 26262 component, or certified production-vehicle diagnostic tool.
+AXIOM is an engineering portfolio and experimental telemetry project. It is **not** a safety-certified ECU, ISO 26262 component, or certified production-vehicle diagnostic product.
 
 ## Author
 
