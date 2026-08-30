@@ -1,0 +1,57 @@
+# Build output
+build/
+build-*/
+cmake-build-*/
+out/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+Testing/
+*.ninja
+.ninja_*
+
+# Compiled files
+*.o
+*.obj
+*.a
+*.lib
+*.dll
+*.so
+*.dylib
+*.exe
+*.pdb
+*.ilk
+
+# Qt Creator / IDE state
+*.user
+*.user.*
+.qtcreator/
+.vscode/
+.idea/
+
+# Runtime output
+*.log
+*.csv
+*.tmp
+*.bak
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Local backup folders created during UI/branding iterations
+_ui_backup_*/
+_minimal_header_backup_*/
+_branding_backup_*/
+_.*_backup_*/
+
+# Employer-specific/private portfolio notes are intentionally not public
+docs/CROUSE_MATCH.md
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
