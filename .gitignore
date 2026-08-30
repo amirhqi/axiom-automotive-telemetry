@@ -61,3 +61,18 @@ _finalize_backup_*/
 
 # Local release artifacts
 dist/
+
+# Local/generated artifacts
+build/
+cmake-build-*/
+dist/
+_test_backup_*/
+_ui_backup_*/
+_minimal_header_backup_*/
+_branding_backup_*/
+_finalize_backup_*/
+_finalizer_backup_*/
+*.user
+*.autosave
+*.log
+*.csv
